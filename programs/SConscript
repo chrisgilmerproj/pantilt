@@ -1,0 +1,12 @@
+Import('env')
+
+sourceList = ['pantilt', ]
+
+#-------------------------------------------------------------------------------
+# Nothing to modify below this line
+#-------------------------------------------------------------------------------
+
+for sourceName in sourceList:
+   SConscript('./%s/SConscript' % sourceName)
+
+Export('env')

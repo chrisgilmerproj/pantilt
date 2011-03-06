@@ -1,0 +1,33 @@
+import os
+import sys
+
+Import('env')
+
+sourceList = ['PhidgetServoClass']
+libraryList = []
+frameworkList = ['Phidget21']
+
+#-------------------------------------------------------------------------------
+# Nothing to modify below this line
+#-------------------------------------------------------------------------------
+
+env.AppendUnique(CPPPATH=['./inc',])
+
+for framework in frameworkList:
+   env.AppendUnique(CPPPATH=['/Library/Frameworks/%s.framework/Headers' % (framework)])
+   env.Append(LINKFLAGS=['-framework','%s' % (framework)])
+
+libObjs = []
+for library in libraryList:
+   libPath = './../%s' % (library)
+   env.AppendUnique(CPPPATH=['%s/inc' % libPath,])
+   
+for sourceName in sourceList:
+   targetFile = './obj/%s.o' % (sourceName)
+   sourceFile = './src/%s.cpp' % (sourceName)
+   libObject = env.Object(target = targetFile, source = sourceFile)
+   libObjs.append(libObject)
+   env.Library(source = libObject)
+
+Export('env')
+Return('libObjs')

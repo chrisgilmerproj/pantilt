@@ -1,0 +1,35 @@
+import os
+import sys
+
+Import('env')
+
+sourceList = ['pantilt']
+libraryList = ['cvBlobModule', 'PanTiltCameraClass', 'PhidgetServoClass', ]
+frameworkList = ['Phidget21','OpenCV']
+
+#-------------------------------------------------------------------------------
+# Nothing to modify below this line
+#-------------------------------------------------------------------------------
+
+env.AppendUnique(CPPPATH=['./inc',])
+
+for framework in frameworkList:
+   env.AppendUnique(CPPPATH=['/Library/Frameworks/%s.framework/Headers' % (framework)])
+   env.Append(LINKFLAGS=['-framework','%s' % (framework)])
+
+libObjs = []
+for library in libraryList:
+   libPath = '../../libraries/%s' % (library)
+   env.AppendUnique(CPPPATH=['%s/inc' % (libPath),])
+   o = SConscript('%s/SConscript' % (libPath))
+   libObjs.append(o)
+   
+for sourceName in sourceList:
+   targetFile = './obj/%s.o' % (sourceName)
+   sourceFile = './src/%s.cpp' % (sourceName)
+   libObject = env.Object(target = targetFile, source = sourceFile)
+
+   programName = './bin/%s' % (sourceName)
+   env.Program(target = programName, source = libObject, LIBS=libObjs)
+
+Export('env')
